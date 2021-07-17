@@ -8,6 +8,7 @@
 
 <script lang="ts">
 import TaskForm, { Category } from '@/components/TaskForm.vue'
+import { defineComponent } from 'vue'
 
 interface Task {
   id: string,
@@ -21,7 +22,7 @@ interface TasksState {
   tasks: Task[]
 }
 
-export default {
+export default defineComponent({
   name: 'Tasks',
   components: { TaskForm },
   data (): TasksState {
@@ -38,5 +39,5 @@ export default {
       tasks: []
     }
   }
-}
+})
 </script>
