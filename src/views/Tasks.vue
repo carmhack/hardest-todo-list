@@ -7,13 +7,13 @@
 </template>
 
 <script lang="ts">
-import TaskForm from '@/components/TaskForm.vue'
+import TaskForm, { ICategory } from '@/components/TaskForm.vue'
 
 interface Task {
   id: string,
   text: string,
   completed: boolean,
-  category: string
+  category: ICategory
 }
 
 interface TasksState {
@@ -29,7 +29,11 @@ export default {
       newTask: {
         text: '',
         completed: false,
-        category: 'Principale'
+        category: {
+          color: '#9e9e9e',
+          value: 'Principale',
+          label: 'Principale'
+        }
       },
       tasks: []
     }

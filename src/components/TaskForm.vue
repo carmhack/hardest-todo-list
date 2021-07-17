@@ -1,9 +1,16 @@
 <template>
-  <div class="form">
-    <input class="form__input" type="text" placeholder="Fare la spesa" />
+  <div class="form" v-if="data">
+    <input class="form__input" type="text" placeholder="es. fare la spesa" :value="data.text" />
     <div class="form__dropdown">
       <div class="dropdown">
-        <button class="dropdown__toggle" :class="{ 'active': dropdownOpen }" type="button" aria-haspopup="true" @click="dropdownOpen = !dropdownOpen">{{ (selectedOption && selectedOption.label) || 'Seleziona categoria' }}</button>
+        <button
+          class="dropdown__toggle"
+          :class="{ 'active': dropdownOpen }"
+          type="button"
+          aria-haspopup="true" @click="dropdownOpen = !dropdownOpen"
+        >
+          {{ (selectedOption && selectedOption.label) || 'Seleziona categoria' }}
+        </button>
         <ul class="dropdown__menu" role="listbox" :aria-expanded="dropdownOpen">
           <li
             v-for="(category, index) in categoryOptions"
@@ -24,7 +31,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-interface ICategory {
+export interface ICategory {
   color: string,
   value: string,
   label: string
@@ -32,7 +39,7 @@ interface ICategory {
 
 interface ITaskFormState {
   dropdownOpen: boolean,
-  selectedOption: string,
+  selectedOption: ICategory,
   categoryOptions: ICategory[]
 }
 
@@ -44,15 +51,10 @@ export default defineComponent({
       required: true
     }
   },
-  created () {
-    if (this.data) {
-      this.selectedOption = this.data.category
-    }
-  },
   data (): ITaskFormState {
     return {
       dropdownOpen: false,
-      selectedOption: '',
+      selectedOption: this.data.category,
       categoryOptions: [
         {
           color: '#9e9e9e',
