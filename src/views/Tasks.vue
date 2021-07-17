@@ -7,13 +7,13 @@
 </template>
 
 <script lang="ts">
-import TaskForm, { ICategory } from '@/components/TaskForm.vue'
+import TaskForm, { Category } from '@/components/TaskForm.vue'
 
 interface Task {
   id: string,
   text: string,
   completed: boolean,
-  category: ICategory
+  category: Category
 }
 
 interface TasksState {

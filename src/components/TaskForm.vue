@@ -31,16 +31,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-export interface ICategory {
+export interface Category {
   color: string,
   value: string,
   label: string
 }
 
-interface ITaskFormState {
+interface TaskFormState {
   dropdownOpen: boolean,
-  selectedOption: ICategory,
-  categoryOptions: ICategory[]
+  selectedOption: Category,
+  categoryOptions: Category[]
 }
 
 export default defineComponent({
@@ -51,7 +51,7 @@ export default defineComponent({
       required: true
     }
   },
-  data (): ITaskFormState {
+  data (): TaskFormState {
     return {
       dropdownOpen: false,
       selectedOption: this.data.category,
