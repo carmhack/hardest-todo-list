@@ -1,6 +1,6 @@
 <template>
   <div class="form" v-if="data">
-    <input class="form__input" type="text" placeholder="es. fare la spesa" :value="data.text" />
+    <input class="form__input" type="text" placeholder="es. fare la spesa" :value="data.text" @input="onInput" />
     <div class="form__dropdown">
       <div class="dropdown">
         <button
@@ -17,7 +17,7 @@
             :key="category.value"
             role="option"
             :tabindex="index"
-            @click="selectedOption = category; dropdownOpen = !dropdownOpen"
+            @click="onCategoryClick(category)"
           >
             <span class="optioncolor" :style="{ 'background-color': category.color }"></span>
             {{ category.label }}
@@ -30,16 +30,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
-export interface Category {
-  color: string,
-  value: string,
-  label: string
-}
+import Category from '../types/Category'
 
 interface TaskFormState {
   dropdownOpen: boolean,
-  selectedOption: Category,
   categoryOptions: Category[]
 }
 
@@ -51,10 +45,22 @@ export default defineComponent({
       required: true
     }
   },
+  computed: {
+    selectedOption (): Category | null {
+      let toRet = null
+      if (this.data.category) {
+        const findCategory = this.categoryOptions.find((category: Category) =>
+          category.value === this.data.category)
+        if (findCategory) {
+          toRet = findCategory
+        }
+      }
+      return toRet
+    }
+  },
   data (): TaskFormState {
     return {
       dropdownOpen: false,
-      selectedOption: this.data.category,
       categoryOptions: [
         {
           color: '#9e9e9e',
@@ -76,7 +82,16 @@ export default defineComponent({
           value: 'Spesa',
           label: 'Spesa'
         }
-      ]
+      ] as Category[]
+    }
+  },
+  methods: {
+    onCategoryClick (category: Category) {
+      this.$emit('changeCategory', { category: category.value, id: this.data.id })
+      this.dropdownOpen = !this.dropdownOpen
+    },
+    onInput (event: any) {
+      this.$emit('changeText', { value: event.target.value, id: this.data.id })
     }
   }
 })
@@ -84,6 +99,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .form {
+  margin: 10px 0;
   position: relative;
   height: 60px;
   width: 100%;
