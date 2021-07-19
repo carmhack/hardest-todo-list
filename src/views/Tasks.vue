@@ -8,16 +8,18 @@
         :data="task"
         @changeCategory="onChangeCategory($event)"
         @changeText="onChangeText($event)"
+        @checkTask="onCheckTask($event)"
       ></task-form>
       <button class="button add-new" @click="onAddNew">+</button>
     </div>
 
-    <div class="box">
+    <div class="box" v-if="completedTasks.length > 0">
       <h2 class="title">{{ completedTasksLabel }}</h2>
       <task-form
         v-for="task in completedTasks"
         :key="task.id"
         :data="task"
+        @checkTask="onCheckTask($event)"
     ></task-form>
     </div>
   </div>
@@ -82,6 +84,12 @@ export default defineComponent({
     }
   },
   methods: {
+    onCheckTask (taskId: number) {
+      const findTask = this.tasks.find((task: Task) => task.id === taskId)
+      if (findTask) {
+        findTask.completed = !findTask.completed
+      }
+    },
     onChangeCategory (event: any) {
       const findTask = this.tasks.find((task: Task) => task.id === event.id)
       if (findTask) {
@@ -102,9 +110,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.box:nth-child(2) {
-  margin-top: 20px;
-}
 button.button.add-new {
   margin-top: 10px;
   background-color: white;

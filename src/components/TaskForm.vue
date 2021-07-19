@@ -1,6 +1,12 @@
 <template>
   <div class="form" v-if="data">
     <input
+      class="form__checkbox"
+      type="checkbox"
+      :checked="data.completed"
+      @change="$emit('checkTask', data.id)"
+    />
+    <input
       class="form__input"
       :class="{'stroke': data.completed}"
       type="text"
@@ -123,6 +129,17 @@ export default defineComponent({
     text-decoration: line-through;
   }
 
+  &__checkbox {
+    position: absolute;
+    left: 1%;
+    top: 30%;
+    width: 40px;
+    height: 40%;
+    border: 1px solid #bababa;
+    border-radius: 10px;
+    z-index: 10;
+  }
+
   &__input {
     position: absolute;
     top: 0;
@@ -131,7 +148,7 @@ export default defineComponent({
     height: 100%;
     background-color: $white;
     color: $primary-clr;
-    padding: 16px;
+    padding: 16px 16px 16px 60px;
     font-family: inherit;
     font-size: 18px;
     font-weight: 400;
