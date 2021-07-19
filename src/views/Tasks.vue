@@ -13,14 +13,22 @@
       <button class="button add-new" @click="onAddNew">+</button>
     </div>
 
-    <div class="box" v-if="completedTasks.length > 0">
-      <h2 class="title">{{ completedTasksLabel }}</h2>
-      <task-form
-        v-for="task in completedTasks"
-        :key="task.id"
-        :data="task"
-        @checkTask="onCheckTask($event)"
-    ></task-form>
+    <div v-if="completedTasks.length > 0" class="box">
+      <h2 class="title">
+        <span
+          :class="[ showCompletedTasks ? 'mdi mdi-arrow-down' : 'mdi mdi-arrow-up' ]"
+          @click="showCompletedTasks = !showCompletedTasks"
+        ></span>
+        {{ completedTasksLabel }}
+      </h2>
+      <div v-if="showCompletedTasks" class="completed-tasks-box">
+        <task-form
+            v-for="task in completedTasks"
+            :key="task.id"
+            :data="task"
+            @checkTask="onCheckTask($event)"
+        ></task-form>
+      </div>
     </div>
   </div>
 </template>
@@ -32,7 +40,8 @@ import Task from '../types/Task'
 
 interface TasksState {
   newTask: Omit<Task, 'id'>,
-  tasks: Task[]
+  tasks: Task[],
+  showCompletedTasks: boolean
 }
 
 export default defineComponent({
@@ -80,7 +89,8 @@ export default defineComponent({
           completed: true,
           category: 'Principale'
         }
-      ]
+      ],
+      showCompletedTasks: true
     }
   },
   methods: {
