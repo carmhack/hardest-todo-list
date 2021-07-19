@@ -1,14 +1,25 @@
 <template>
   <div class="container">
-    <h2 class="title">Elenco Task</h2>
-    <task-form
-      v-for="task in tasks"
-      :key="task.id"
-      :data="task"
-      @changeCategory="onChangeCategory($event)"
-      @changeText="onChangeText($event)"
+    <div class="box">
+      <h2 class="title">Elenco Task</h2>
+      <task-form
+        v-for="task in currentTasks"
+        :key="task.id"
+        :data="task"
+        @changeCategory="onChangeCategory($event)"
+        @changeText="onChangeText($event)"
+      ></task-form>
+      <button class="button add-new" @click="onAddNew">+</button>
+    </div>
+
+    <div class="box">
+      <h2 class="title">{{ completedTasksLabel }}</h2>
+      <task-form
+        v-for="task in completedTasks"
+        :key="task.id"
+        :data="task"
     ></task-form>
-    <button class="button add-new" @click="onAddNew">+</button>
+    </div>
   </div>
 </template>
 
@@ -25,6 +36,22 @@ interface TasksState {
 export default defineComponent({
   name: 'Tasks',
   components: { TaskForm },
+  computed: {
+    completedTasksLabel () : string {
+      const totalCompletedTasks = this.completedTasks.length
+      if (totalCompletedTasks <= 1) {
+        return totalCompletedTasks + ' task completato'
+      } else {
+        return totalCompletedTasks + ' task completati'
+      }
+    },
+    completedTasks (): Task[] {
+      return this.tasks.filter((task: Task) => task.completed)
+    },
+    currentTasks (): Task[] {
+      return this.tasks.filter((task: Task) => !task.completed)
+    }
+  },
   data (): TasksState {
     return {
       newTask: {
@@ -44,6 +71,12 @@ export default defineComponent({
           text: 'Lavare i piatti',
           completed: false,
           category: 'Casa'
+        },
+        {
+          id: 3,
+          text: 'Smontare telescopio',
+          completed: true,
+          category: 'Principale'
         }
       ]
     }
@@ -69,6 +102,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.box:nth-child(2) {
+  margin-top: 20px;
+}
 button.button.add-new {
   margin-top: 10px;
   background-color: white;

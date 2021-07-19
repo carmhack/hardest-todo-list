@@ -1,13 +1,22 @@
 <template>
   <div class="form" v-if="data">
-    <input class="form__input" type="text" placeholder="es. fare la spesa" :value="data.text" @input="onInput" />
+    <input
+      class="form__input"
+      :class="{'stroke': data.completed}"
+      type="text"
+      placeholder="es. fare la spesa"
+      :value="data.text"
+      @input="onInput"
+      :disabled="data.completed"
+    />
     <div class="form__dropdown">
       <div class="dropdown">
         <button
           class="dropdown__toggle"
           :class="{ 'active': dropdownOpen }"
           type="button"
-          aria-haspopup="true" @click="dropdownOpen = !dropdownOpen"
+          aria-haspopup="true"
+          @click="onDropdownToggle"
         >
           {{ (selectedOption && selectedOption.label) || 'Seleziona categoria' }}
         </button>
@@ -86,6 +95,12 @@ export default defineComponent({
     }
   },
   methods: {
+    onDropdownToggle () {
+      const completed = this.data.completed
+      if (!completed) {
+        this.dropdownOpen = !this.dropdownOpen
+      }
+    },
     onCategoryClick (category: Category) {
       this.$emit('changeCategory', { category: category.value, id: this.data.id })
       this.dropdownOpen = !this.dropdownOpen
@@ -103,6 +118,10 @@ export default defineComponent({
   position: relative;
   height: 60px;
   width: 100%;
+
+  .stroke {
+    text-decoration: line-through;
+  }
 
   &__input {
     position: absolute;
