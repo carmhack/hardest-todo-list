@@ -178,9 +178,9 @@ export default defineComponent({
   &__dropdown {
     position: absolute;
     right: 1%;
-    top: 10%;
+    top: 20%;
     width: 120px;
-    height: 80%;
+    height: 60%;
     border: 1px solid #bababa;
     border-radius: 10px;
 
@@ -196,7 +196,7 @@ export default defineComponent({
         font-size: 14px;
         border: 0;
         border-radius: 10px;
-        padding: 12px 35px 12px 12px;
+        padding: 10px 35px 10px 10px;
         outline: none;
         position: relative;
         height: 100%;
@@ -235,7 +235,7 @@ export default defineComponent({
         overflow: auto;
         position: absolute;
         left: 50%;
-        top: 80%;
+        top: 90%;
         transform: translateX(-50%);
         visibility: hidden;
 
