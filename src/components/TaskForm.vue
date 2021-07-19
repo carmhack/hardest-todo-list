@@ -20,6 +20,7 @@
         <button
           class="dropdown__toggle"
           :class="{ 'active': dropdownOpen }"
+          :style="{ 'background-color': 'rgba(' + hexToRgb(dropdownBackgroundColor) + ', 0.3)' }"
           type="button"
           aria-haspopup="true"
           @click="onDropdownToggle"
@@ -61,6 +62,13 @@ export default defineComponent({
     }
   },
   computed: {
+    dropdownBackgroundColor () : string {
+      let toRet = 'inherit'
+      if (this.selectedOption) {
+        toRet = this.selectedOption.color
+      }
+      return toRet
+    },
     selectedOption (): Category | null {
       let toRet = null
       if (this.data.category) {
@@ -113,6 +121,12 @@ export default defineComponent({
     },
     onInput (event: any) {
       this.$emit('changeText', { value: event.target.value, id: this.data.id })
+    },
+    hexToRgb (hex: string): string {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return result
+        ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+        : '0, 0, 0'
     }
   }
 })
@@ -165,7 +179,7 @@ export default defineComponent({
     position: absolute;
     right: 1%;
     top: 10%;
-    width: 180px;
+    width: 120px;
     height: 80%;
     border: 1px solid #bababa;
     border-radius: 10px;
@@ -186,6 +200,7 @@ export default defineComponent({
         outline: none;
         position: relative;
         height: 100%;
+        width: 100%;
 
         &::after {
           content: '';
