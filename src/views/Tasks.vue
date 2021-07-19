@@ -28,6 +28,7 @@
             :data="task"
             @checkTask="onCheckTask($event)"
         ></task-form>
+        <h4 class="delete-label" @click="onDeleteCompletedTasks"><span class="mdi mdi-trash-can-outline"></span> Elimina i task completati</h4>
       </div>
     </div>
   </div>
@@ -94,6 +95,15 @@ export default defineComponent({
     }
   },
   methods: {
+    deleteCompletedTasks () {
+      this.tasks = this.tasks.filter((task: Task) => !task.completed)
+    },
+    onDeleteCompletedTasks () {
+      const userConfirm = confirm('Sei sicuro di voler eliminare tutti i task completati?')
+      if (userConfirm) {
+        this.deleteCompletedTasks()
+      }
+    },
     onCheckTask (taskId: number) {
       const findTask = this.tasks.find((task: Task) => task.id === taskId)
       if (findTask) {
@@ -120,6 +130,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.delete-label {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+}
 button.button.add-new {
   margin-top: 10px;
   background-color: white;
