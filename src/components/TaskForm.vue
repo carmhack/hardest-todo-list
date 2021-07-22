@@ -1,5 +1,5 @@
 <template>
-  <div class="form" v-if="data">
+  <div v-if="data" class="form">
     <input
       class="form__checkbox"
       type="checkbox"
@@ -40,6 +40,9 @@
           </li>
         </ul>
       </div>
+    </div>
+    <div class="form__delete">
+      <span class="mdi mdi-trash-can-outline" @click="$emit('deleteTask', data.id)"></span>
     </div>
   </div>
 </template>
@@ -177,7 +180,7 @@ export default defineComponent({
 
   &__dropdown {
     position: absolute;
-    right: 1%;
+    right: 5%;
     top: 20%;
     width: 120px;
     height: 60%;
@@ -269,6 +272,19 @@ export default defineComponent({
         }
       }
     }
+  }
+
+  &__delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
   }
 }
 </style>

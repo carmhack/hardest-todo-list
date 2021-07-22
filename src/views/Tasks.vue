@@ -9,6 +9,7 @@
         @changeCategory="onChangeCategory($event)"
         @changeText="onChangeText($event)"
         @checkTask="onCheckTask($event)"
+        @deleteTask="onDeleteTask($event)"
       ></task-form>
       <button class="button add-new" @click="onAddNew">+</button>
     </div>
@@ -18,6 +19,7 @@
         <span
           :class="[ showCompletedTasks ? 'mdi mdi-arrow-down' : 'mdi mdi-arrow-up' ]"
           @click="showCompletedTasks = !showCompletedTasks"
+          style="cursor: pointer"
         ></span>
         {{ completedTasksLabel }}
       </h2>
@@ -27,6 +29,7 @@
             :key="task.id"
             :data="task"
             @checkTask="onCheckTask($event)"
+            @deleteTask="onDeleteTask($event)"
         ></task-form>
         <h4 class="delete-label" @click="onDeleteCompletedTasks"><span class="mdi mdi-trash-can-outline"></span> Elimina i task completati</h4>
       </div>
@@ -95,14 +98,8 @@ export default defineComponent({
     }
   },
   methods: {
-    deleteCompletedTasks () {
-      this.tasks = this.tasks.filter((task: Task) => !task.completed)
-    },
-    onDeleteCompletedTasks () {
-      const userConfirm = confirm('Sei sicuro di voler eliminare tutti i task completati?')
-      if (userConfirm) {
-        this.deleteCompletedTasks()
-      }
+    onAddNew () {
+      this.tasks.push({ id: this.tasks.length + 1, ...this.newTask })
     },
     onCheckTask (taskId: number) {
       const findTask = this.tasks.find((task: Task) => task.id === taskId)
@@ -122,8 +119,21 @@ export default defineComponent({
         findTask.text = event.value
       }
     },
-    onAddNew () {
-      this.tasks.push({ id: this.tasks.length + 1, ...this.newTask })
+    onDeleteTask (taskId: number) {
+      const userConfirm = confirm('Sei sicuro di voler eliminare il task?')
+      const findTask = this.tasks.find((task: Task) => task.id === taskId)
+      if (userConfirm && findTask) {
+        this.tasks = this.tasks.filter((task: Task) => task.id !== taskId)
+      }
+    },
+    onDeleteCompletedTasks () {
+      const userConfirm = confirm('Sei sicuro di voler eliminare tutti i task completati?')
+      if (userConfirm) {
+        this.deleteCompletedTasks()
+      }
+    },
+    deleteCompletedTasks () {
+      this.tasks = this.tasks.filter((task: Task) => !task.completed)
     }
   }
 })
