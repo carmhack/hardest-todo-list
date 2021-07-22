@@ -1,6 +1,17 @@
 <template>
   <div class="container">
     <div class="box">
+      <div class="searchbox">
+        <label for="search">Ricerca per testo</label>
+        <input
+          type="text"
+          name="search"
+          class="searchbar"
+          placeholder="Cerca..."
+          v-model="searchText"
+        />
+      </div>
+
       <h2 class="title">Elenco Task</h2>
       <task-form
         v-for="task in currentTasks"
@@ -45,7 +56,8 @@ import Task from '../types/Task'
 interface TasksState {
   newTask: Omit<Task, 'id'>,
   tasks: Task[],
-  showCompletedTasks: boolean
+  showCompletedTasks: boolean,
+  searchText: string
 }
 
 export default defineComponent({
@@ -64,7 +76,13 @@ export default defineComponent({
       return this.tasks.filter((task: Task) => task.completed)
     },
     currentTasks (): Task[] {
-      return this.tasks.filter((task: Task) => !task.completed)
+      const tasks = this.tasks
+      const searchText = this.searchText
+      let toRet = tasks.filter((task: Task) => !task.completed)
+      if (searchText !== '') {
+        toRet = toRet.filter((task: Task) => task.text.toLowerCase().includes(searchText.toLowerCase()))
+      }
+      return toRet
     }
   },
   data (): TasksState {
@@ -94,7 +112,8 @@ export default defineComponent({
           category: 'Principale'
         }
       ],
-      showCompletedTasks: true
+      showCompletedTasks: false,
+      searchText: ''
     }
   },
   methods: {
@@ -140,6 +159,26 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.searchbox {
+  width: 100%;
+  margin-bottom: 20px;
+
+  .searchbar {
+    margin-top: 10px;
+    display: block;
+    width: 80%;
+    height: 100%;
+    background-color: $white;
+    color: $primary-clr;
+    padding: 16px;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 400;
+    border: 0;
+    border-radius: 10px;
+    outline: none;
+  }
+}
 .delete-label {
   text-align: center;
   color: red;
