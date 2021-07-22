@@ -1,15 +1,36 @@
 <template>
   <div class="container">
     <div class="box">
-      <div class="searchbox">
-        <label for="search">Ricerca per testo</label>
-        <input
-          type="text"
-          name="search"
-          class="searchbar"
-          placeholder="Cerca..."
-          v-model="searchText"
-        />
+      <div class="search">
+        <div class="search__box">
+          <label for="search__label">Ricerca per testo</label>
+          <div>
+            <input
+              type="text"
+              name="search"
+              class="search__input"
+              placeholder="Cerca..."
+              v-model="searchText"
+            />
+            <span class="mdi mdi-filter" @click="showCategoriesFilter = !showCategoriesFilter"></span>
+          </div>
+          <div v-if="showCategoriesFilter" class="search__categories">
+            <h3>Ricerca per categorie</h3>
+            <div
+              class="search__category"
+              v-for="category in categoryOptions"
+              :key="category.value"
+            >
+              <input
+                type="checkbox"
+                :name="category.value"
+                :id="category.value"
+                @change="onCategoryFilter(category.value)"
+              >
+              <label :for="category.value">{{ category.label }}</label>
+            </div>
+          </div>
+        </div>
       </div>
 
       <h2 class="title">Elenco Task</h2>
@@ -50,14 +71,18 @@
 
 <script lang="ts">
 import TaskForm from '@/components/TaskForm.vue'
+import Category from '@/types/Category'
 import { defineComponent } from 'vue'
 import Task from '../types/Task'
 
 interface TasksState {
   newTask: Omit<Task, 'id'>,
   tasks: Task[],
+  searchText: string,
+  categoryOptions: Category[],
+  selectedCategories: string[],
   showCompletedTasks: boolean,
-  searchText: string
+  showCategoriesFilter: boolean
 }
 
 export default defineComponent({
@@ -78,7 +103,16 @@ export default defineComponent({
     currentTasks (): Task[] {
       const tasks = this.tasks
       const searchText = this.searchText
+      const selectedCategories = this.selectedCategories
+
       let toRet = tasks.filter((task: Task) => !task.completed)
+
+      // Filtro categorie
+      if (selectedCategories.length > 0) {
+        toRet = toRet.filter((task: Task) => selectedCategories.includes(task.category))
+      }
+
+      // Filtro testuale
       if (searchText !== '') {
         toRet = toRet.filter((task: Task) => task.text.toLowerCase().includes(searchText.toLowerCase()))
       }
@@ -112,8 +146,32 @@ export default defineComponent({
           category: 'Principale'
         }
       ],
+      searchText: '',
+      categoryOptions: [
+        {
+          color: '#9e9e9e',
+          value: 'Principale',
+          label: 'Principale'
+        },
+        {
+          color: '#4caf50',
+          value: 'Casa',
+          label: 'Casa'
+        },
+        {
+          color: '#ff9800',
+          value: 'Lavoro',
+          label: 'Lavoro'
+        },
+        {
+          color: '#9c27b0',
+          value: 'Spesa',
+          label: 'Spesa'
+        }
+      ] as Category[],
+      selectedCategories: [] as string[],
       showCompletedTasks: false,
-      searchText: ''
+      showCategoriesFilter: true
     }
   },
   methods: {
@@ -153,20 +211,34 @@ export default defineComponent({
     },
     deleteCompletedTasks () {
       this.tasks = this.tasks.filter((task: Task) => !task.completed)
+    },
+    onCategoryFilter (categoryValue: string) {
+      const selectedCategories = this.selectedCategories
+      const find = selectedCategories.find((category: string) => category === categoryValue)
+      if (find) {
+        // Elimino categoria perchè già presente
+        selectedCategories.splice(selectedCategories.indexOf(categoryValue), 1)
+      } else {
+        selectedCategories.push(categoryValue)
+      }
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
-.searchbox {
+.search {
   width: 100%;
   margin-bottom: 20px;
 
-  .searchbar {
+  &__box {
+    position: relative;
+  }
+
+  &__input {
     margin-top: 10px;
-    display: block;
-    width: 80%;
+    display: inline-block;
+    width: 90%;
     height: 100%;
     background-color: $white;
     color: $primary-clr;
@@ -177,6 +249,32 @@ export default defineComponent({
     border: 0;
     border-radius: 10px;
     outline: none;
+
+    &:focus {
+      border: 2px solid $accent-clr;
+    }
+  }
+
+  span {
+    font-size: 26px;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+
+  &__categories {
+    background-color: rgba($accent-clr, 0.6);
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  &__category {
+    margin: 6px 0;
+
+    label {
+      font-size: 16px;
+      padding-left: 6px;
+    }
   }
 }
 .delete-label {
