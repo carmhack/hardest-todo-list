@@ -88,6 +88,11 @@ interface TasksState {
 export default defineComponent({
   name: 'Tasks',
   components: { TaskForm },
+  mounted () {
+    if (localStorage.tasks) {
+      this.tasks = JSON.parse(localStorage.tasks)
+    }
+  },
   computed: {
     completedTasksLabel () : string {
       const totalCompletedTasks = this.completedTasks.length
@@ -127,24 +132,6 @@ export default defineComponent({
         category: 'Principale'
       },
       tasks: [
-        {
-          id: 1,
-          text: 'Comprare il pane',
-          completed: false,
-          category: 'Spesa'
-        },
-        {
-          id: 2,
-          text: 'Lavare i piatti',
-          completed: false,
-          category: 'Casa'
-        },
-        {
-          id: 3,
-          text: 'Smontare telescopio',
-          completed: true,
-          category: 'Principale'
-        }
       ],
       searchText: '',
       categoryOptions: [
@@ -171,29 +158,36 @@ export default defineComponent({
       ] as Category[],
       selectedCategories: [] as string[],
       showCompletedTasks: false,
-      showCategoriesFilter: true
+      showCategoriesFilter: false
     }
   },
   methods: {
+    saveOnLocalStorage (tasks: Task[]) {
+      localStorage.tasks = JSON.stringify(tasks)
+    },
     onAddNew () {
       this.tasks.push({ id: this.tasks.length + 1, ...this.newTask })
+      this.saveOnLocalStorage(this.tasks)
     },
     onCheckTask (taskId: number) {
       const findTask = this.tasks.find((task: Task) => task.id === taskId)
       if (findTask) {
         findTask.completed = !findTask.completed
+        this.saveOnLocalStorage(this.tasks)
       }
     },
     onChangeCategory (event: any) {
       const findTask = this.tasks.find((task: Task) => task.id === event.id)
       if (findTask) {
         findTask.category = event.category
+        this.saveOnLocalStorage(this.tasks)
       }
     },
     onChangeText (event: any) {
       const findTask = this.tasks.find((task: Task) => task.id === event.id)
       if (findTask) {
         findTask.text = event.value
+        this.saveOnLocalStorage(this.tasks)
       }
     },
     onDeleteTask (taskId: number) {
@@ -201,6 +195,7 @@ export default defineComponent({
       const findTask = this.tasks.find((task: Task) => task.id === taskId)
       if (userConfirm && findTask) {
         this.tasks = this.tasks.filter((task: Task) => task.id !== taskId)
+        this.saveOnLocalStorage(this.tasks)
       }
     },
     onDeleteCompletedTasks () {
@@ -211,6 +206,7 @@ export default defineComponent({
     },
     deleteCompletedTasks () {
       this.tasks = this.tasks.filter((task: Task) => !task.completed)
+      this.saveOnLocalStorage(this.tasks)
     },
     onCategoryFilter (categoryValue: string) {
       const selectedCategories = this.selectedCategories
